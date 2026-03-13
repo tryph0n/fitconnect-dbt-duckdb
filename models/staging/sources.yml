@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: fitconnect
+    description: "FitConnect OLTP data from PostgreSQL (attached via dbt-duckdb postgres plugin)"
+    database: fitconnect_pg
+    schema: public
+    tables:
+      - name: users
+        description: "User accounts"
+      - name: profiles
+        description: "User profiles with physical info and fitness goals"
+      - name: exercises
+        description: "Exercise catalog"
+      - name: workouts
+        description: "User workout sessions"
+      - name: workout_exercises
+        description: "Exercises performed within each workout session"

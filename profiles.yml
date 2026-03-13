@@ -1,0 +1,14 @@
+fitconnect:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', 'data/fitconnect.duckdb') }}"
+      schema: "{{ env_var('ANALYTICS_SCHEMA', 'analytics') }}"
+      threads: "{{ env_var('DBT_THREADS', '4') | int }}"
+      extensions:
+        - postgres
+      attach:
+        - path: "postgresql://{{ env_var('PG_USER') }}:{{ env_var('PG_PASSWORD') }}@{{ env_var('PG_HOST') }}:{{ env_var('PG_PORT') }}/{{ env_var('PG_DB') }}"
+          type: postgres
+          alias: fitconnect_pg

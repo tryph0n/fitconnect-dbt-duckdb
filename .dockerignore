@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+data/fitconnect.duckdb
+data/fitconnect.duckdb.wal
+target/
+enonce.md
+*.pdf
+knowledge/
+SUIVI_PROJET.md
+.git/
+logs/
+dbt_packages/
+.env
+.user.yml

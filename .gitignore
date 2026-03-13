@@ -1,0 +1,27 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Environment secrets
+.env
+
+# dbt build artifacts
+target/
+dbt_packages/
+
+# DuckDB files
+data/fitconnect.duckdb
+data/fitconnect.duckdb.wal
+
+# dbt Cloud user config
+.user.yml
+
+# Documentation files (PDF, project tracking, demos)
+.doc/

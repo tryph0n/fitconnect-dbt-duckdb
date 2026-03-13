@@ -1,0 +1,20 @@
+name: "fitconnect"
+version: "1.0.0"
+config-version: 2
+
+profile: "fitconnect"
+
+model-paths: ["models"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  fitconnect:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

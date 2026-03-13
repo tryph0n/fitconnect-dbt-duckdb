@@ -1,0 +1,92 @@
+version: 2
+
+models:
+  - name: fitconnect_1
+    description: "Monolithic fact table for analyzing user workout sessions. Combines profile data with aggregated workout statistics using CTEs directly from source tables."
+    columns:
+      - name: user_id
+        description: "Unique user identifier"
+        tests:
+          - unique
+          - not_null
+      - name: first_name
+        description: "User's first name"
+        tests:
+          - not_null
+      - name: last_name
+        description: "User's last name"
+        tests:
+          - not_null
+      - name: gender
+        description: "User's gender"
+      - name: fitness_goal
+        description: "User's fitness goal"
+      - name: activity_level
+        description: "User's activity level"
+      - name: first_workout_date
+        description: "Date of the user's first completed workout. NULL if the user has no completed workouts."
+      - name: latest_workout_date
+        description: "Date of the user's most recent completed workout. NULL if the user has no completed workouts."
+      - name: number_of_workouts
+        description: "Total number of completed workouts. 0 if the user has no completed workouts."
+        tests:
+          - not_null
+      - name: total_calories_burned
+        description: "Sum of calories burned across all completed workouts. 0 if no workouts."
+        tests:
+          - not_null
+      - name: avg_workout_duration
+        description: "Average workout duration in minutes. 0 if no workouts."
+        tests:
+          - not_null
+      - name: avg_rating
+        description: "Average workout rating (1-5 scale). 0 if no workouts."
+        tests:
+          - not_null
+
+  - name: user_workout_summary
+    description: "Modular fact table for analyzing user workout sessions. Same output as fitconnect_1 but built on top of staging models using ref()."
+    columns:
+      - name: user_id
+        description: "Unique user identifier"
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_profiles')
+                field: user_id
+      - name: first_name
+        description: "User's first name"
+        tests:
+          - not_null
+      - name: last_name
+        description: "User's last name"
+        tests:
+          - not_null
+      - name: gender
+        description: "User's gender"
+      - name: fitness_goal
+        description: "User's fitness goal"
+      - name: activity_level
+        description: "User's activity level"
+      - name: first_workout_date
+        description: "Date of the user's first completed workout. NULL if the user has no completed workouts."
+      - name: latest_workout_date
+        description: "Date of the user's most recent completed workout. NULL if the user has no completed workouts."
+      - name: number_of_workouts
+        description: "Total number of completed workouts. 0 if the user has no completed workouts."
+        tests:
+          - not_null
+      - name: total_calories_burned
+        description: "Sum of calories burned across all completed workouts. 0 if no workouts."
+        tests:
+          - not_null
+      - name: avg_workout_duration
+        description: "Average workout duration in minutes. 0 if no workouts."
+        tests:
+          - not_null
+      - name: avg_rating
+        description: "Average workout rating (1-5 scale). 0 if no workouts."
+        tests:
+          - not_null

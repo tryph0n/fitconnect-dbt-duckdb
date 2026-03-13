@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: stg_profiles
+    description: Staged user profile data from the FitConnect app. One record per
+      user with physical attributes and fitness goals.
+    columns:
+      - name: profile_id
+        description: Unique identifier for the profile
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: Foreign key to the users table. One profile per user.
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: source('fitconnect', 'users')
+                field: UserID
+      - name: first_name
+        description: User's first name
+        tests:
+          - not_null
+      - name: last_name
+        description: User's last name
+        tests:
+          - not_null
+      - name: birth_date
+        description: User's date of birth (always January 1st in test data)
+      - name: gender
+        description: User's gender (Male, Female, or Other)
+      - name: height
+        description: User's height in centimeters
+      - name: current_weight
+        description: User's current weight in kilograms
+      - name: target_weight
+        description: User's target weight in kilograms
+      - name: fitness_goal
+        description: User's fitness goal (Lose Weight, Gain Muscle, or Maintain Fitness)
+      - name: activity_level
+        description: User's activity level (Low, Medium, or High)
+
+  - name: stg_workouts
+    description: Staged workout sessions filtered to completed workouts only. One
+      record per workout session.
+    columns:
+      - name: workout_id
+        description: Unique identifier for the workout session
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: Foreign key to the users table
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: source('fitconnect', 'users')
+                field: UserID
+      - name: workout_date
+        description: Date when the workout was performed
+        tests:
+          - not_null
+      - name: duration
+        description: Workout duration in minutes
+      - name: calories_burned
+        description: Estimated calories burned during the workout
+      - name: rating
+        description: User's rating of the workout (1-5)
+      - name: completion_status
+        description: Workout completion status (always 'Completed' in this view due to
+          filtering)
