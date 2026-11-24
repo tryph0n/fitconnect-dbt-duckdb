@@ -4,11 +4,10 @@ __pycache__/
 data/fitconnect.duckdb
 data/fitconnect.duckdb.wal
 target/
-enonce.md
 *.pdf
-knowledge/
-SUIVI_PROJET.md
 .git/
+.github/
+.doc/
 logs/
 dbt_packages/
 .env
