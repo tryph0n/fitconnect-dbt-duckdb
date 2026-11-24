@@ -2,6 +2,8 @@
 name = "learn-olap"
 version = "0.1.0"
 description = "FitConnect OLAP analytics pipeline with dbt and DuckDB"
+authors = [{ name = "Samy Saad" }]
+license = "MIT"
 requires-python = ">=3.13"
 dependencies = [
     "boto3>=1.42.66",
@@ -10,3 +12,16 @@ dependencies = [
     "psycopg[binary]>=3.3.3",
     "pydantic-settings>=2.9.1",
 ]
+
+[project.urls]
+Repository = "https://github.com/tryph0n/learn_olap"
+
+[dependency-groups]
+dev = ["ruff==0.15.0"]
+
+[tool.ruff]
+target-version = "py313"
+
+[tool.ruff.lint.per-file-ignores]
+# The scripts add the project root to sys.path before importing settings.
+"scripts/*.py" = ["E402"]
