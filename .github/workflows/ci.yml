@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.4.0
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run python scripts/check_readme_links.py
+
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: cp .env.example .env
+      - run: docker compose build
+      - run: docker compose up -d
+      - run: curl -fsS --retry 30 --retry-delay 2 --retry-all-errors http://localhost:8080 -o /dev/null
+      - run: docker compose --profile analytics run --rm analytics
+      - if: failure()
+        run: docker compose logs
+      - if: always()
+        run: docker compose down -v
