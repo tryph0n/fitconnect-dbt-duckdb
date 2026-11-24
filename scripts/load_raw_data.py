@@ -4,16 +4,17 @@ import logging
 import sys
 from pathlib import Path
 
-logger = logging.getLogger(__name__)
-
 import boto3
 import psycopg
+from botocore.config import Config
 from botocore.exceptions import ClientError
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from settings import settings
+
+logger = logging.getLogger(__name__)
 
 INPUT_DIR = PROJECT_ROOT / "data" / "input"
 
@@ -86,6 +87,43 @@ TABLE_SCHEMAS = {
 }
 
 
+def make_s3_client():
+    """Build the S3 client: a local S3 server if S3_ENDPOINT_URL is set, else AWS S3."""
+    endpoint_url = settings.s3_endpoint_url or None
+    # moto serves buckets by path, not by virtual host name.
+    config = Config(s3={"addressing_style": "path"}) if endpoint_url else None
+    return boto3.client(
+        "s3",
+        endpoint_url=endpoint_url,
+        aws_access_key_id=settings.aws_access_key_id,
+        aws_secret_access_key=settings.aws_secret_access_key,
+        region_name=settings.aws_region,
+        config=config,
+    )
+
+
+def ensure_bucket(s3_client, bucket: str, region: str) -> None:
+    """Create the bucket if it does not exist (the local S3 server starts empty)."""
+    if not bucket:
+        logger.error("S3_BUCKET is empty: set it in .env (see .env.example)")
+        raise SystemExit(1)
+
+    try:
+        s3_client.head_bucket(Bucket=bucket)
+        logger.info("[skip] s3://%s already exists", bucket)
+        return
+    except ClientError as e:
+        if e.response["Error"]["Code"] != "404":
+            raise
+
+    create_args = {"Bucket": bucket}
+    # us-east-1 is the default region and does not accept a LocationConstraint.
+    if region != "us-east-1":
+        create_args["CreateBucketConfiguration"] = {"LocationConstraint": region}
+    s3_client.create_bucket(**create_args)
+    logger.info("[create] s3://%s in %s", bucket, region)
+
+
 def upload_csvs_to_s3(s3_client, bucket: str, prefix: str, input_dir: Path) -> None:
     """Upload local CSVs to S3 (skip if already present)."""
     for table_name in LOAD_ORDER:
@@ -122,15 +160,15 @@ def load_csvs_to_postgres(s3_client, bucket: str, prefix: str, conn) -> None:
         response = s3_client.get_object(Bucket=bucket, Key=s3_key)
         csv_data = response["Body"].read()
 
-        with conn.cursor() as cur:
-            with cur.copy(
+        with (
+            conn.cursor() as cur,
+            cur.copy(
                 f"COPY {table_name} FROM STDIN WITH (FORMAT csv, HEADER true, NULL '')"
-            ) as copy:
-                copy.write(csv_data)
+            ) as copy,
+        ):
+            copy.write(csv_data)
 
-        row_count = conn.execute(
-            f"SELECT COUNT(*) FROM {table_name}"
-        ).fetchone()[0]
+        row_count = conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
         logger.info("[load] %s: %d rows", table_name, row_count)
 
     conn.commit()
@@ -138,14 +176,10 @@ def load_csvs_to_postgres(s3_client, bucket: str, prefix: str, conn) -> None:
 
 def main() -> None:
     """Upload CSVs to S3, then load into PostgreSQL."""
-    s3_client = boto3.client(
-        "s3",
-        aws_access_key_id=settings.aws_access_key_id,
-        aws_secret_access_key=settings.aws_secret_access_key,
-        region_name=settings.aws_region,
-    )
+    s3_client = make_s3_client()
 
     logger.info("Step 1: Upload CSVs to S3")
+    ensure_bucket(s3_client, settings.s3_bucket, settings.aws_region)
     upload_csvs_to_s3(s3_client, settings.s3_bucket, settings.s3_prefix, INPUT_DIR)
 
     logger.info("Step 2: Load CSVs from S3 into PostgreSQL")

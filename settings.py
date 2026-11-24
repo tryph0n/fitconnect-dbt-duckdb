@@ -1,5 +1,7 @@
 """Centralized project settings loaded from .env via pydantic-settings."""
 
+import logging
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -29,7 +31,8 @@ class Settings(BaseSettings):
     postgres_password: str = "changeme"
     postgres_db: str = "fitconnect"
 
-    # AWS S3
+    # S3: an endpoint URL targets a local S3 server (moto); empty means real AWS S3
+    s3_endpoint_url: str = ""
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
     aws_region: str = "eu-west-3"
@@ -46,8 +49,6 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-
-import logging
 
 logging.basicConfig(
     format="%(asctime)s %(levelname)s %(message)s",
