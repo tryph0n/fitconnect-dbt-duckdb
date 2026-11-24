@@ -3,7 +3,7 @@ FROM python:3.13-slim
 WORKDIR /app
 
 # Install uv
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.13.7 /uv /usr/local/bin/uv
 
 # Copy project files
 COPY pyproject.toml uv.lock .python-version ./
@@ -14,6 +14,7 @@ COPY dbt_project.yml profiles.yml settings.py ./
 COPY data/input/ data/input/
 COPY scripts/ scripts/
 COPY models/ models/
+COPY tests/ tests/
 COPY analyses/ analyses/
 
 # Default: run the full pipeline (load data, build models, generate docs)
