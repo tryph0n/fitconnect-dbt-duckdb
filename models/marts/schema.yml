@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: fitconnect_1
+  - name: user_workout_summary_monolithic
     description: "Monolithic fact table for analyzing user workout sessions. Combines profile data with aggregated workout statistics using CTEs directly from source tables."
     columns:
       - name: user_id
@@ -45,7 +45,7 @@ models:
           - not_null
 
   - name: user_workout_summary
-    description: "Modular fact table for analyzing user workout sessions. Same output as fitconnect_1 but built on top of staging models using ref()."
+    description: "Modular fact table for analyzing user workout sessions. Same output as user_workout_summary_monolithic but built on top of staging models using ref()."
     columns:
       - name: user_id
         description: "Unique user identifier"

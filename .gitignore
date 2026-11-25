@@ -15,6 +15,7 @@ wheels/
 # dbt build artifacts
 target/
 dbt_packages/
+logs/
 
 # DuckDB files
 data/fitconnect.duckdb

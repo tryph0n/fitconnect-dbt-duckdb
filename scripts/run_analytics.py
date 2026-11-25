@@ -4,14 +4,14 @@ import logging
 import sys
 from pathlib import Path
 
-logger = logging.getLogger(__name__)
-
 import duckdb
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from settings import settings
+
+logger = logging.getLogger(__name__)
 
 DB_PATH = PROJECT_ROOT / settings.duckdb_path
 QUERIES_FILE = PROJECT_ROOT / "analyses" / "analytics_queries.sql"
@@ -68,7 +68,7 @@ def main() -> None:
 
         # Print rows
         for row in rows:
-            print(" | ".join(f"{str(val):>20}" for val in row))
+            print(" | ".join(f"{val!s:>20}" for val in row))
 
     con.close()
     print(f"\n{'=' * 60}")
