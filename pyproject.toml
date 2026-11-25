@@ -1,5 +1,5 @@
 [project]
-name = "learn-olap"
+name = "fitconnect-dbt-duckdb"
 version = "0.1.0"
 description = "FitConnect OLAP analytics pipeline with dbt and DuckDB"
 authors = [{ name = "Samy Saad" }]
