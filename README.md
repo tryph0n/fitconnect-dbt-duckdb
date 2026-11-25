@@ -1,10 +1,10 @@
 # FitConnect -- S3 + PostgreSQL + dbt-DuckDB OLAP Pipeline
 
-[![CI](https://github.com/tryph0n/learn_olap/actions/workflows/ci.yml/badge.svg)](https://github.com/tryph0n/learn_olap/actions/workflows/ci.yml)
+[![CI](https://github.com/tryph0n/fitconnect-dbt-duckdb/actions/workflows/ci.yml/badge.svg)](https://github.com/tryph0n/fitconnect-dbt-duckdb/actions/workflows/ci.yml)
 
 Learning project from a data engineering training course.
 
-A sibling project, [learn_ga_to_psql](https://github.com/tryph0n/learn_ga_to_psql), uses the same fictional data with another stack: dlt loads it into ClickHouse on Kubernetes.
+A sibling project, [fitconnect-oltp-olap-k8s](https://github.com/tryph0n/fitconnect-oltp-olap-k8s), uses the same fictional data with another stack: dlt loads it into ClickHouse on Kubernetes.
 
 An OLAP analytics pipeline for the FitConnect fitness application. CSV data is uploaded to S3, loaded into PostgreSQL, then transformed through dbt staging and mart layers into DuckDB analytics tables.
 

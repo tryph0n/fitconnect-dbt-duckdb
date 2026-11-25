@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/tryph0n/learn_olap"
+Repository = "https://github.com/tryph0n/fitconnect-dbt-duckdb"
 
 [dependency-groups]
 dev = ["ruff==0.15.0"]
